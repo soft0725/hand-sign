@@ -1,17 +1,7 @@
-import math
-
-# list_x = [1,4]
-# list_y = [5,2]
-
-# dif = math.sqrt(((list_x[0]-list_x[1])**2) + ((list_y[0]-list_y[1])**2))
-
-# print(dif)
-# print(type(dif))
-
-
 import cv2 
 import mediapipe as mp # 손가락 인식
 import math
+from PIL import ImageFont
 
 mp_drawing = mp.solutions.drawing_utils # 웹캠 영상에서 뼈 마디를 인식함.
 mp_hands = mp.solutions.hands # 동일하다 
@@ -39,36 +29,59 @@ with mp_hands.Hands(
 
         if result.multi_hand_landmarks: # 이미지가 인식이 되어서 True가 된다면 
             for hand_landmarks in result.multi_hand_landmarks:
-                thumb = hand_landmarks.landmark[4] # x y 값이 들어감 
-                index = hand_landmarks.landmark[8] # x y 값이 들어감 
-                # 엄지 손가락의 인덱스 = 4
-                # 검지 손가락의 인덱스 = 8
 
-                diff = math.sqrt(((thumb.x-index.x)**2) + ((thumb.y-index.y)**2))
-                # 거리는 엄지와 검지의 x 좌표값의 거리 차이의 절대값을 이용 
-                # diff 는 0 ~ 1 사이의 값을 가지게 된다. 
-                # 그래서 아래와 같이 해줘야 함 
+                thumb_tip = hand_landmarks.landmark[4] # 엄지 
 
-                diff_result = float(diff * 500)
-                # 500 이라는 값은 수정 해줘야 할 수도 있다. 
+                index_tip = hand_landmarks.landmark[8] # 검지  
 
-                if diff_result <= 15.6 :
+                middle_finger_tip = hand_landmarks.landmark[12] # 중지 
+
+                ring_finger_tip = hand_landmarks.landmark[16] # 약지 
+                ring_finger_pip = hand_landmarks.landmark[14] # 약지-2
+
+                pinky_tip = hand_landmarks.landmark[20] # 소지 
+                pinky_dip = hand_landmarks.landmark[19] # 소지-1
+                
+                dif1 = math.sqrt(((thumb_tip.x-index_tip.x)**2) + ((thumb_tip.y-index_tip.y)**2))
+                # 엄지와 검지의 거리 
+                dif2 = math.sqrt(((index_tip.x-middle_finger_tip.x)**2) + ((index_tip.y-middle_finger_tip.y)**2))
+                # 검지와 중지의 거리 
+                dif3 = math.sqrt(((middle_finger_tip.x-ring_finger_tip.x)**2) + ((middle_finger_tip.y-ring_finger_tip.y)**2))
+                # 중지와 약지의 거리  
+                dif4 = math.sqrt(((ring_finger_pip.x-pinky_dip.x)**2) + ((ring_finger_pip.y-pinky_dip.y)**2))
+                # 약지와 소지의 거리  
+
+                diff_result1 = float(dif1 * 500)
+                diff_result2 = float(dif2 * 500)
+                diff_result3 = float(dif3 * 500)
+                diff_result4 = float(dif4 * 500)
+                # 현재 가장 적절한 값은 500
+
+                if diff_result1 <= 15.6:
                     cv2.putText(
-                    image, text = '0', org=(10, 30),
+                    image, text = '4-8', org=(10, 30),
                     fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
                     color=255, thickness=2)
-
-                elif diff_result >= 100:
+                elif diff_result2 <= 25.9:
                     cv2.putText(
-                    image, text = '100', org=(10, 30),
+                    image, text = '8-12', org=(10, 30),
+                    fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
+                    color=255, thickness=2)
+                elif diff_result3 <= 21.2:
+                    cv2.putText(
+                    image, text = '12-16', org=(10, 30),
+                    fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
+                    color=255, thickness=2)
+                elif diff_result4 <= 17.3:
+                    cv2.putText(
+                    image, text = '16-20', org=(10, 30),
                     fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
                     color=255, thickness=2)
                 else :
                     cv2.putText(
-                    image, text = '%d' % int(diff_result), org=(10, 30),
+                    image, text = '%d  %d  %d  %d' % (diff_result1, diff_result2, diff_result3, diff_result4) , org=(10, 30),
                     fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
                     color=255, thickness=2)
-
 
                 mp_drawing.draw_landmarks(
                     image,hand_landmarks, mp_hands.HAND_CONNECTIONS)
