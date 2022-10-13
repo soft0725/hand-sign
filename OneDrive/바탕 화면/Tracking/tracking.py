@@ -76,7 +76,6 @@ with mp_hands.Hands(
                     temp = index_mcp.x
                     temp = int(temp * 100)
                     list.append(temp)
-
                 elif ((((rock1 <= 2) and (rock2 <= 2)) and ((rock3 <= 2) and (rock4 <= 2))) and (rock5 >= 2)):
                     text = 'GOOD'
                     motion(image, text)
@@ -86,15 +85,21 @@ with mp_hands.Hands(
                     motion(image, text)
 
                 else:
-                    print_num(image, rock5, rock1, rock2, rock3, rock4)
-                    # value = list[0] - list[-1]
-                    # print(f'이동한 거리 : {value}')
-                    # dis_temp.append(value)
+                    # print_num(image, rock5, rock1, rock2, rock3, rock4)
+                    if value < -5 :
+                        text = 'move right'
+                        motion(image, text)
+                    elif value > -5 and value < 4:
+                        text = 'Waiting'
+                        motion(image, text)
+                    else :
+                        text = 'move left'
+                        motion(image, text)
+                    
                     if len(list) > 0 :
                         value = list[0] - list[-1]
-                    
-                
-                
+                    list.clear()
+                    print(value)
 
                 mp_drawing.draw_landmarks(
                     image,hand_landmarks, mp_hands.HAND_CONNECTIONS)
@@ -103,8 +108,6 @@ with mp_hands.Hands(
 
         cv2.imshow('image', image)
         if cv2.waitKey(1) == ord('q'):
-            print(list)
-            print(value * -1)
             break
 
     cap.release()

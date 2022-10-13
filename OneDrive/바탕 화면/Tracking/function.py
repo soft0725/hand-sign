@@ -1,10 +1,9 @@
 import cv2
 import math
 
-def get_dis(x1,x2,y1,y2):
-    value = math.sqrt(((x1-x2)**2) + ((y1-y2)**2))
-    result = value * 500
-    return result
+def get_dis(x1,x2,y1,y2,W):
+    temp = (((x1-x2)**2) + ((y1-y2)**2)) * W
+    return float(temp)
 
 def motion(image, value):
     cv2.putText(
