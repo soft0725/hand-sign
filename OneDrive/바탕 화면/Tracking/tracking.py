@@ -99,7 +99,6 @@ with mp_hands.Hands(
                     if len(list) > 0 :
                         value = list[0] - list[-1]
                     list.clear()
-                    print(value)
 
                 mp_drawing.draw_landmarks(
                     image,hand_landmarks, mp_hands.HAND_CONNECTIONS)
@@ -111,4 +110,3 @@ with mp_hands.Hands(
             break
 
     cap.release()
-    
