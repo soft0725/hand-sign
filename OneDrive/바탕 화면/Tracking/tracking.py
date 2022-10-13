@@ -111,3 +111,4 @@ with mp_hands.Hands(
             break
 
     cap.release()
+    
