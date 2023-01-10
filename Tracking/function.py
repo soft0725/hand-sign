@@ -10,9 +10,3 @@ def motion(image, value):
     image, text = value, org=(10, 30),
     fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
     color=255, thickness=2)
-
-def print_num(image, rock1, rock2, rock3, rock4, rock5):
-    cv2.putText(
-    image, text = '%d  %d  %d  %d  %d' % (rock1, rock2, rock3, rock4, rock5) , org=(10, 30),
-    fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
-    color=255, thickness=2)
